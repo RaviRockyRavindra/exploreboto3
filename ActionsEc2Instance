@@ -11,16 +11,22 @@ import botocore
 Accesskey=input("enter your access key here ... ")
 SecretAccesskey=input("enter your secret key ... ")
 ProfileName=input("enter your profile name(not account name)...")
-tt=0
+
+#---- got all inputs to require now fetch the info based on user inputs----#
+
+#---- users credentials are in postive reponse then try block will execute or else thrown as exception --- #
 try :
     session=rockye.Session(aws_access_key_id=Accesskey,aws_secret_access_key=SecretAccesskey)
+    
+    #-- start user session --#
     
     for i in range(1,49):
         print("\t*\n")
     
+    #--- display Account id---#
     print("welcome user",rockye.client('sts').get_caller_identity().get('Account'))
 
-
+    #-- assign the service name ec2 and display all regions over there--#
     client=session.client(service_name="ec2")
 
     allreg=client.describe_regions()
@@ -30,6 +36,7 @@ try :
         list_of_regions.append(listregions['RegionName'])  
     #   print(list_of_regions)
     
+    #-- so far created empty list and region names are appended for each if instances are avail then it will display with some info---#
     for each_region in list_of_regions:
        session=rockye.Session(profile_name=ProfileName,region_name=each_region)
        rocky=session.resource(service_name="ec2")
