@@ -1,0 +1,92 @@
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Sep 15 18:32:40 2019
+
+@author: ravindra sai konna
+"""
+## boto3 
+## can achieve by pip install boto3
+## here we go actions taken on ec2 instances and account identity as well 
+#--------------- Ravi Rocky Ravindra -----#
+
+
+import boto3 as rockye
+import botocore
+Accesskey=input("enter your access key here ... ")
+SecretAccesskey=input("enter your secret key ... ")
+ProfileName=input("enter your profile name(not account name)...")
+
+
+
+try :
+    session=rockye.Session(aws_access_key_id=Accesskey,aws_secret_access_key=SecretAccesskey)
+    servic=session.client(service_name="s3")
+    lstbuckets=servic.list_buckets()
+    
+    def CreateBucket(bucketname):
+           print("choosen bucket name is",bucketname)
+           locationconstarint=input("enter location constraint for s3 bucket")
+           servic.create_bucket(Bucket=bucketname,CreateBucketConfiguration={'LocationConstraint':locationconstarint}) 
+           print('bucket created with name of',bucketname)
+           return;
+       
+    def BucketsList():
+        for each in lstbuckets['Buckets']:
+            print(each['Name'])
+        return;   
+        
+    def Download(bucketname):
+        print('choosen bucketname is',bucketname)
+        fileename=input('enter your download file...')
+        downloadpath=input('enter your path to download to(/tmp/)...')
+        servic.download_file(bucketname,fileename,downloadpath)
+        print('file downloaded successfully')
+        
+        
+        
+    def DeleteBucket(bucketname):
+         print('choosen bucketname is',bucketname)
+         servic.delete_bucket(Bucket=bucketname)
+         print(bucketname,'got deleted')
+        
+    def uploadBucket(bucketname):
+         print('choosen bucketname is',bucketname)   
+         filename=input('enter your file to upload...')
+         servic.upload_file(filename,bucketname,filename)
+         print('file uploaded successfully as',filename)
+         ss=rockye.client('s3')
+         print(ss)
+         
+  
+    inputaction=int(input("1.Create a bucket \n2.BucketsList \n3.Delete the bucket \n4.download files from bucket...\n5.upload file in bucket"))
+       
+        
+    if  inputaction == 1:
+            print("option 1")
+            choosebucket=input("enter bucket name... ")
+            CreateBucket(choosebucket)
+        
+    elif inputaction == 2:
+            print("option 2")
+            BucketsList()
+            
+    elif  inputaction == 3:
+            print("option 3")
+            choosebucket=input("enter bucket name... ")
+            DeleteBucket(choosebucket)
+        
+    elif inputaction == 4:
+            print("option 4")
+            choosebucket=input("enter bucket name... ")
+            Download(choosebucket)    
+            
+    elif inputaction == 5:
+            print("option 5")
+            choosebucket=input("enter bucket name... ")
+            uploadBucket(choosebucket)            
+           
+
+except botocore.exceptions.ClientError as ee:
+       print("error in authentication",ee)
